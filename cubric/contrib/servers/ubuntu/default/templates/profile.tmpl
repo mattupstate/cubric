@@ -1,0 +1,6 @@
+export PIP_DOWNLOAD_CACHE=$HOME/.pipcache
+
+if [ $USER == %(user)s ]; then
+    export WORKON_HOME=$HOME/.virtualenv
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
