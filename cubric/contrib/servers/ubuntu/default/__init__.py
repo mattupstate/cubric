@@ -16,6 +16,15 @@ from cubric.utils import app_bundle
 
 
 class Initializer(object):
+    """Default Ubuntu server initializer that installs nginx, uWSGI and 
+    supervisor. Additionally, it ensures an admin user named ubuntu to handle
+    all sudo commands.
+
+    Main nginx configuration: /etc/nginx/nginx.conf
+    Included nginx configurations: /etc/nginx/conf.d/*.conf
+    Main supervisor configuration: /etc/supervisord.conf
+    Included supervisor configurations: /etc/supervisor/*.conf
+    """
     def __init__(self):
         with mode_sudo():
             # Ensure an admin group
