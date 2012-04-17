@@ -1,6 +1,10 @@
 # Cubric
 
-Cubric allows you to easily create and configure servers for Python projects on Amazon EC2 or Rackspace Cloud Servers. With a small amount of configuration you can create servers and deploy applications with great ease! 
+Cubric allows you to easily create and configure servers for Python projects on Amazon EC2 or Rackspace Cloud Servers. With a small amount of configuration you can create servers and deploy applications with great ease! For example, you could create a new staging server and deploy your WSGI application to it with the following terminal command:
+
+    $ fab -c rcfile.staging create_server create_app_context deploy
+
+## Overview
 
 Cubric has been developed using two core concepts:
 
