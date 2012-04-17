@@ -16,6 +16,7 @@ An application context is a specification for an application. It's sort of the '
 ### Installation
 
 Install Cubric:
+
     pip install https://github.com/mattupstate/cubric/tarball/develop
 
 #### EC2:
@@ -63,11 +64,15 @@ Configure your Fabric environment in your fabfile or by using an rcfile by addin
 
 ### Create a Server
 
-Add the following to your fabfile:
+Create a file named `fabfile.py` in the root of your project and add the following:
     
     from cubric.tasks import *
 
-Create the server:
+To see a list of tasks you can run the command:
+
+    $ fab --list
+
+Now go ahead and create a server:
 
     $ fab -c your_rcfile create_server
 
