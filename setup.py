@@ -29,7 +29,7 @@ def fullsplit(path, result=None):
         return result
     return fullsplit(head, [tail] + result)
 
-packages, data_files = [], []
+packages = []
 root_dir = os.path.dirname(__file__)
 
 if root_dir != '':
@@ -43,9 +43,6 @@ for dirpath, dirnames, filenames in os.walk('cubric'):
     if '__init__.py' in filenames:
         packages.append('.'.join(fullsplit(dirpath)))
         
-    elif filenames:
-        data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
-
 setup(
     name='Cubric',
     version='0.1.0',
@@ -56,7 +53,7 @@ setup(
     description='Simple server creation and configuration on EC2 and Rackspace',
     long_description=__doc__,
     packages=packages,
-    data_files=data_files,
+    package_data={'cubric.contrib.servers.ubuntu.default': ['templates/*.tmpl']},
     zip_safe=False,
     include_package_data=True,
     platforms='any',
