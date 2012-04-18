@@ -76,7 +76,8 @@ class Initializer(object):
             run('apt-get update -qq')
             
             # Ensure the following packages are installed
-            for p in ['build-essential', 
+            for p in ['build-dep',
+                      'build-essential', 
                       'libmysqlclient-dev', 
                       'libxml2-dev', 
                       'libjpeg62-dev', 
@@ -84,6 +85,7 @@ class Initializer(object):
                       'python-setuptools', 
                       'python-mysqldb', 
                       'python-pip',
+                      'python-imaging',
                       'mysql-client', 
                       'git-core', 
                       'nginx']:
