@@ -46,8 +46,6 @@ for dirpath, dirnames, filenames in os.walk('cubric'):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-print data_files
-
 setup(
     name='Cubric',
     version='0.1.0',
