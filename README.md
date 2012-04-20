@@ -4,7 +4,7 @@ Cubric allows you to easily create servers, configure servers and deploy WSGI ap
 
     $ fab -c rcfile.staging create_server create_app_context deploy
 
-Checkout the [example application](https://github.com/mattupstate/cubric_example)!
+Checkout the [example application](https://github.com/mattupstate/cubric-example)!
 
 ## Overview
 
