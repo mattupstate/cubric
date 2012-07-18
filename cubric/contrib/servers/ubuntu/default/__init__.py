@@ -11,7 +11,7 @@ from fabric.utils import puts
 from fabric.context_managers import cd, settings, prefix
 from fabric.contrib.console import confirm
 
-from cubric.core import Server as BaseServer, ApplicationContext, app_context, server
+from cubric.core import Server as BaseServer, ApplicationContext, server
 from cubric.utils import app_bundle
 
 
@@ -122,7 +122,7 @@ class Initializer(object):
                 if not file_exists(fn):
                     file_write(fn, contents)
                 else:
-                    file_update(fn, lambda _:contents)
+                    file_update(fn, lambda _: contents)
 
             puts(green('Create supervisor config folder'))
             dir_ensure('/etc/supervisor')
@@ -169,7 +169,7 @@ class WsgiApplicationContext(ApplicationContext):
     def __init__(self, name='default', user='ubuntu',
                  wsgi_file='wsgi.py', wsgi_callable='application',
                  nginx_template=None, supervisor_template=None):
-        super(WsgiApplicationContext, self).__init__(name, user)
+        super(WsgiApplicationContext, self).__init__(name, user, environment)
         self.wsgi_file = wsgi_file
         self.wsgi_callable = wsgi_callable
         self.virtualenv = '/home/%s/.virtualenv/%s' % (self.user, self.name)
@@ -215,7 +215,7 @@ class WsgiApplicationContext(ApplicationContext):
                 contents = file_local_read(lfn) % self.__dict__
                 rfn = '/home/%s/.%s' % (self.user, f)
                 file_ensure(rfn, owner=self.user, group=self.user)
-                file_update(rfn, lambda _:contents)
+                file_update(rfn, lambda _: contents)
 
             # Make sure the sites folder exists
             dir_ensure('/home/%s/sites' % self.user)
@@ -275,7 +275,7 @@ class WsgiApplicationContext(ApplicationContext):
                 contents = file_local_read(c[0]) % self.__dict__
 
                 if file_exists(fn):
-                    file_update(fn, lambda _:contents)
+                    file_update(fn, lambda _: contents)
                 else:
                     file_write(fn, contents)
 

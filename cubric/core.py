@@ -5,7 +5,7 @@ from cubric.utils import get_server, get_provider, get_app_context
 
 
 class Server(object):
-    
+
     initializer = None
     sudo_user = None
 
@@ -34,9 +34,10 @@ class Server(object):
 
 class ApplicationContext(object):
 
-    def __init__(self, name, user=None):
+    def __init__(self, name=None, user=None, environment=None):
         self.name = name
         self.user = user
+        self.environment = environment
 
     def restart(self):
         raise NotImplementedError()
@@ -58,7 +59,7 @@ class ApplicationContext(object):
 
     def link_config(self):
         raise NotImplementedError()
-        
+
 
 class server(object):
     def __init__(self, user=None):
