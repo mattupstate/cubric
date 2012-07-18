@@ -118,7 +118,8 @@ class Initializer(object):
                       ('/etc/nginx/nginx.conf', 'nginx.conf.tmpl'),
                       ('/etc/init.d/supervisor', 'supervisor.tmpl')]:
                 fn = f[0]
-                contents = file_local_read(os.path.join(tdir, 'templates', f[1]))
+                p = os.path.join(tdir, 'templates', f[1])
+                contents = file_local_read(p)
                 if not file_exists(fn):
                     file_write(fn, contents)
                 else:
@@ -135,8 +136,10 @@ class Initializer(object):
             run('/etc/init.d/supervisor start')
 
         puts(green('Server setup complete!'))
-        puts(green('Add sites to nginx by linking configuration files in /etc/nginx/conf.d'))
-        puts(green('Add uWSGI processes to supervisor by linking configuration files in /etc/supervisor'))
+        puts(green('Add sites to nginx by linking configuration '
+                   'files in /etc/nginx/conf.d'))
+        puts(green('Add uWSGI processes to supervisor by linking '
+                   'configuration files in /etc/supervisor'))
 
 
 class Server(BaseServer):

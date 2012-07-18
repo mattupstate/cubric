@@ -1,7 +1,7 @@
 
 from __future__ import with_statement
 
-from fabric.api import env, settings, task
+from fabric.api import env, task
 
 from cubric.core import provider, server, app_context
 from cubric.utils import get_callable
@@ -11,7 +11,7 @@ from cubric.utils import get_callable
 def create_server(initialize=True):
     """Create a server"""
     with provider() as p:
-        host_string = p.create_server()   
+        host_string = p.create_server()
         if initialize:
             env.host_string = host_string
             initialize_server()
@@ -75,7 +75,7 @@ def start_app():
 
 
 @task
-def stop_server():
+def stop_app():
     """Stop the application"""
     with app_context() as c:
         c.stop()

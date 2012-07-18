@@ -9,6 +9,9 @@ class Server(object):
     initializer = None
     sudo_user = None
 
+    def __init__(self, sudo_user):
+        self.sudo_user = sudo_user
+
     def configure(self, configurator):
         if not callable(configurator):
             raise Exception('configurator is not a callable')
