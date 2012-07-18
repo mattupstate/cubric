@@ -39,12 +39,12 @@ def get_app_context_vars():
     return rv
 
 
-def get_obj_from_env(key, message, instantiate=False):
+def get_obj_from_env(key, message, instantiate=False, kwargs=None):
+    kwargs = kwargs or {}
     if isinstance(get_or_prompt(key, message), basestring):
         env[key] = import_obj(env[key])
     if instantiate:
-        env[key] = env[key](environment=env.environment,
-                            **get_app_context_vars())
+        env[key] = env[key](**kwargs)
     return env[key]
 
 
@@ -60,7 +60,9 @@ def get_server():
 
 
 def get_app_context():
-    return get_obj_from_env('app_context', 'App context class name', True)
+    kwargs = get_app_context_vars()
+    kwargs['environment'] = env.environment
+    return get_obj_from_env('app_context', 'App context class name', True, kwargs)
 
 
 def get_provider():
