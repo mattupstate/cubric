@@ -33,7 +33,7 @@ def import_obj(import_name):
 def get_app_context_vars():
     rv = {}
     prefix = 'app_context_'
-    for key, value in env:
+    for key, value in env.items():
         if key.startswith(prefix):
             rv[key.replate(prefix, '')] = value
     return rv
