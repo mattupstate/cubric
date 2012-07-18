@@ -2,6 +2,7 @@
 .DS_Store
 fabfile.py
 build
+_build
 dist
 *.egg-info
 rcfile.*
