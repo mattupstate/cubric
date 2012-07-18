@@ -16,7 +16,7 @@ from cubric.utils import app_bundle
 
 
 class Initializer(object):
-    """Default Ubuntu server initializer that installs nginx, uWSGI and 
+    """Default Ubuntu server initializer that installs nginx, uWSGI and
     supervisor. Additionally, it ensures an admin user named ubuntu to handle
     all sudo commands.
 
@@ -41,24 +41,24 @@ class Initializer(object):
             # and ubuntu user has password-less sudo access
             puts(green("Updating /etc/sudoers"))
             file_update(
-                '/etc/sudoers', 
+                '/etc/sudoers',
                 lambda _: text_ensure_line(_,
                     '%admin ALL=(ALL) ALL',
                     'ubuntu  ALL=(ALL) NOPASSWD:ALL'
             ))
 
-            # Perhaps the admin will want to add their public key to the 
+            # Perhaps the admin will want to add their public key to the
             # ubuntu user for password-less SSH access
             if confirm("Do you want to add your public key to the ubuntu "
                        "user's authorized_keys file?"):
                 puts(green("Adding your public key to ubuntu user"))
                 ssh_authorize('ubuntu', file_local_read('~/.ssh/id_rsa.pub'))
-            
+
             # Ubuntu doesn't always have the latest nginx build
             # so here the nginx ubuntu repository is added
             puts(green('Updating repository info for nginx'))
             file_update(
-                '/etc/apt/sources.list', 
+                '/etc/apt/sources.list',
                 lambda _: text_ensure_line(_,
                     'deb http://nginx.org/packages/ubuntu/ lucid nginx',
                     'deb-src http://nginx.org/packages/ubuntu/ lucid nginx'
@@ -71,49 +71,48 @@ class Initializer(object):
             if not 'nginx' in keys:
                 run('wget http://nginx.org/keys/nginx_signing.key')
                 run('apt-key add nginx_signing.key')
-            
+
             # Update apt
             run('apt-get update -qq')
-            
+
             # Ensure the following packages are installed
-            for p in ['build-dep',
-                      'build-essential', 
-                      'libmysqlclient-dev', 
-                      'libxml2-dev', 
-                      'libjpeg62-dev', 
-                      'python-dev', 
-                      'python-setuptools', 
-                      'python-mysqldb', 
+            for p in ['build-essential',
+                      'libmysqlclient-dev',
+                      'libxml2-dev',
+                      'libjpeg62-dev',
+                      'python-dev',
+                      'python-setuptools',
+                      'python-mysqldb',
                       'python-pip',
                       'python-imaging',
-                      'mysql-client', 
-                      'git-core', 
+                      'mysql-client',
+                      'git-core',
                       'nginx']:
                 puts(green('Installing: ' + p))
                 package_ensure(p)
-            
+
             # Link some .so files. This is a little house keeping step
             # in case a library such as PIL is installed
             puts(green('Linking libraries'))
-            for l in [('/usr/lib/x86_64-linux-gnu/libfreetype.so', 
+            for l in [('/usr/lib/x86_64-linux-gnu/libfreetype.so',
                            '/usr/lib/libfreetype.so'),
-                      ('/usr/lib/x86_64-linux-gnu/libz.so', 
+                      ('/usr/lib/x86_64-linux-gnu/libz.so',
                            '/usr/lib/libz.so'),
-                      ('/usr/lib/x86_64-linux-gnu/libjpeg.so', 
+                      ('/usr/lib/x86_64-linux-gnu/libjpeg.so',
                            '/usr/lib/libjpeg.so')]:
                 file_link(l[0], l[1])
-            
+
             # Install some Python libraries
-            for p in ['virtualenv', 
+            for p in ['virtualenv',
                       'virtualenvwrapper',
                       'supervisor',
                       'uwsgi']:
                 puts(green('Installing: ' + p))
                 run('pip install ' + p)
-            
+
             # Configure nginx and supervisor
             puts(green('Configuring supervisor and nginx'))
-            
+
             tdir = os.path.dirname(__file__)
             for f in [('/etc/supervisord.conf', 'supervisord.conf.tmpl'),
                       ('/etc/nginx/nginx.conf', 'nginx.conf.tmpl'),
@@ -134,7 +133,7 @@ class Initializer(object):
 
             # Start supervisor
             run('/etc/init.d/supervisor start')
-        
+
         puts(green('Server setup complete!'))
         puts(green('Add sites to nginx by linking configuration files in /etc/nginx/conf.d'))
         puts(green('Add uWSGI processes to supervisor by linking configuration files in /etc/supervisor'))
@@ -167,7 +166,7 @@ class Server(BaseServer):
 
 class WsgiApplicationContext(ApplicationContext):
 
-    def __init__(self, name='default', user='ubuntu', 
+    def __init__(self, name='default', user='ubuntu',
                  wsgi_file='wsgi.py', wsgi_callable='application',
                  nginx_template=None, supervisor_template=None):
         super(WsgiApplicationContext, self).__init__(name, user)
@@ -204,9 +203,9 @@ class WsgiApplicationContext(ApplicationContext):
         if file_exists(app_authorized_keys) and \
            not file_exists(ctx_authorized_keys):
             sudo('cp %s %s' % (app_authorized_keys, ctx_authorized_keys))
-            file_attribs(ctx_authorized_keys, mode=755, 
+            file_attribs(ctx_authorized_keys, mode=755,
                          owner=self.user, group=self.user)
-        
+
         # Actions to be performed with the app context user
         with settings(user=self.user):
             # Make sure the dot files exist
@@ -217,12 +216,12 @@ class WsgiApplicationContext(ApplicationContext):
                 rfn = '/home/%s/.%s' % (self.user, f)
                 file_ensure(rfn, owner=self.user, group=self.user)
                 file_update(rfn, lambda _:contents)
-            
+
             # Make sure the sites folder exists
             dir_ensure('/home/%s/sites' % self.user)
-            
+
             # Make sure the app's required folders exist
-            for d in [self.root_dir, self.releases_dir, self.etc_dir, 
+            for d in [self.root_dir, self.releases_dir, self.etc_dir,
                       self.log_dir, self.run_dir, self.shared_dir]:
                 dir_ensure(d)
 
@@ -256,7 +255,7 @@ class WsgiApplicationContext(ApplicationContext):
 
             # Link the current release
             file_link(release_dir, self.releases_dir + "/current")
-        
+
             # Recreate virtualenv
             for c in ['rm', 'mk']:
                 run(c + 'virtualenv ' + self.name)
@@ -269,12 +268,12 @@ class WsgiApplicationContext(ApplicationContext):
     def upload_config(self):
         with settings(user=self.user):
             # Render nginx and supervisor configuration files
-            for c in [(self.nginx_template, 'nginx'), 
+            for c in [(self.nginx_template, 'nginx'),
                       (self.supervisor_template, 'supervisor')]:
-                
+
                 fn = '%s/%s.conf' % (self.etc_dir, c[1])
                 contents = file_local_read(c[0]) % self.__dict__
-                
+
                 if file_exists(fn):
                     file_update(fn, lambda _:contents)
                 else:
@@ -282,14 +281,14 @@ class WsgiApplicationContext(ApplicationContext):
 
     def link_config(self):
         with mode_sudo():
-            for c in [('/etc/nginx/conf.d', 'nginx'), 
+            for c in [('/etc/nginx/conf.d', 'nginx'),
                       ('/etc/supervisor', 'supervisor')]:
                 source = '%s/%s.conf' % (self.etc_dir, c[1])
                 destination = '%s/%s.conf' % (c[0], self.name)
 
                 if file_exists(destination):
                     run('rm ' + destination)
-                
+
                 file_link(source, destination)
 
     def start(self):
