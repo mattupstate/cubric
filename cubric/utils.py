@@ -42,7 +42,8 @@ def get_obj_from_env(key, message, instantiate=False):
     if isinstance(get_or_prompt(key, message), basestring):
         env[key] = import_obj(env[key])
     if instantiate:
-        env[key] = env[key](**get_app_context_vars())
+        env[key] = env[key](environment=env.environment,
+                            **get_app_context_vars())
     return env[key]
 
 

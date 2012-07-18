@@ -166,7 +166,7 @@ class Server(BaseServer):
 
 class WsgiApplicationContext(ApplicationContext):
 
-    def __init__(self, name='default', user='ubuntu',
+    def __init__(self, name='default', user='ubuntu', environment='development',
                  wsgi_file='wsgi.py', wsgi_callable='application',
                  nginx_template=None, supervisor_template=None):
         super(WsgiApplicationContext, self).__init__(name, user, environment)
