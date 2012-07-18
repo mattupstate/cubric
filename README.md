@@ -23,7 +23,7 @@ An application context is a specification for an application. It's sort of the '
 
 Install Cubric:
 
-    pip install https://github.com/mattupstate/cubric/tarball/develop
+    pip install cubric
 
 #### EC2:
 
@@ -36,9 +36,12 @@ Configure your Fabric environment in your fabfile or by using an rcfile by addin
     user = ubuntu
     key_filename = /path/to/keyfile
     #host_string = to be added later
-
-    provider = amazon
-    server = cubric.contrib.servers.ubuntu.default.Server
+	
+	branch = master
+    cloud_provider = amazon
+    
+    server_class = cubric.contrib.servers.ubuntu.default.Server
+	context_class = cubric.contrib.servers.ubuntu.default.WsgiApplicationContext
 
     ec2_key = your_ec2_key
     ec2_secret = your_ec2_secret
@@ -59,8 +62,11 @@ Configure your Fabric environment in your fabfile or by using an rcfile by addin
     #password = to be added later
     #host_string = to be added later
 
-    provider = rackspace
-    server = cubric.contrib.servers.ubuntu.default.Server
+    branch = master
+    cloud_provider = amazon
+    
+    server_class = cubric.contrib.servers.ubuntu.default.Server
+	context_class = cubric.contrib.servers.ubuntu.default.WsgiApplicationContext
 
     rackspace_username = your_username
     rackspace_apikey = your_api_key
@@ -88,11 +94,7 @@ This will create and initialize your server. Be sure to make note of the public 
 
 ### Create an Application Context
 
-An application context is the environment under which an application runs. Cubric is primarily developed for Python applications. More specifically WSGI applications that are run using nginx, uWSGI, and supervisor. To create and application context on the server, add the following value to your Fabric environment:
-
-    app_context = cubric.contrib.servers.ubuntu.default.WsgiApplicationContext
-
-Then create the context by running:
+An application context is the environment under which an application runs. Cubric is primarily developed for Python applications. More specifically WSGI applications that are run using nginx, uWSGI, and supervisor. To create and application context on the server run the following command:
 
     $ fab -c your_rcfile create_app_context
 
@@ -103,13 +105,12 @@ Now you should be ready to deploy your WSGI application to the server if your ap
 As previously mentioned, the default server and application context that ships with Cubric uses nginx, uWSGI, and supervisor. The application context expects the following things:
 
 1. The application is under version control using git
-2. Two environment variables for Fabric be present:
-    * `environment`: The app environment such as `staging` or `production`
-    * `branch`: The git branch to deploy such as `origin/master`
-3. Two configuration templates be present in your application where `<environment_name>` is equal to the Fabric environment variable:
+2. A fabric environment variable named `branch` to be set to the branch you wish to deploy such as `develop` or `origin/master`
+3. A fabric environment variable named `context__environment` to be set to your desired environment name such as `development`, `staging`, etc. It defaults to `development` if you don't set it.
+3. Two configuration templates be present in your application where `<environment_name>` is equal to the `context__environment` Fabric environment variable:
     * `etc/<environment_name>/nginx.conf.tmpl`
     * `etc/<environment_name>/supervisor.conf.tmpl`
-4. A WSGI entry file at the root of your project named `wsgi.py` that includes the WSGI callable named `application`
+4. A WSGI entry file at the root of your project named `wsgi.py` that includes the WSGI callable named `app`. If you want to override the defaults you can set two Fabric environment variables named `context__wsgi_file` and `wsgi_callable`.
 
 You can refer to the example project to see these requirements in action.
 
