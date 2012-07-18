@@ -2,8 +2,8 @@
 Cubric
 --------------
 
-Cubric allows you to easily create and configure servers for Python projects
-on Amazon EC2 or Rackspace Cloud Servers
+Cubric allows you to easily create and configure servers for arbitrary WSGI
+applications on Amazon EC2 or Rackspace Cloud Servers
 
 
 Links
@@ -15,6 +15,7 @@ Links
 """
 import os
 from setuptools import setup
+
 
 def fullsplit(path, result=None):
     """Split a pathname into components (the opposite of os.path.join) in a
@@ -34,15 +35,16 @@ root_dir = os.path.dirname(__file__)
 
 if root_dir != '':
     os.chdir(root_dir)
-    
+
 for dirpath, dirnames, filenames in os.walk('cubric'):
     # Ignore dirnames that start with '.'
     for i, dirname in enumerate(dirnames):
-        if dirname.startswith('.'): del dirnames[i]
-        
+        if dirname.startswith('.'):
+            del dirnames[i]
+
     if '__init__.py' in filenames:
         packages.append('.'.join(fullsplit(dirpath)))
-        
+
 setup(
     name='Cubric',
     version='0.1.0',
@@ -53,13 +55,9 @@ setup(
     description='Simple server creation and configuration on EC2 and Rackspace',
     long_description=__doc__,
     packages=packages,
-    package_data={'cubric.contrib.servers.ubuntu.default': ['templates/*.tmpl']},
     zip_safe=False,
-    include_package_data=True,
     platforms='any',
-    install_requires=[
-        'cuisine'
-    ],
+    install_requires=['cuisine'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
