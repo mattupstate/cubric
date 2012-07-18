@@ -32,11 +32,12 @@ def import_obj(import_name):
 
 def get_obj_from_env(key, message, instantiate=False, kwargs=None):
     kwargs = kwargs or {}
-    if isinstance(get_or_prompt(key, message), basestring):
-        env[key] = import_obj(env[key])
+    rv = None
+    if isinstance(env[key], basestring):
+        rv = import_obj(env[key])
     if instantiate:
-        env[key] = env[key](**kwargs)
-    return env[key]
+        rv = rv(**kwargs)
+    return rv
 
 
 def get_callable(key, message):
@@ -53,7 +54,7 @@ def get_vars(prefix=None):
             rv[key] = value
             continue
         if key.startswith(prefix):
-            rv[key.replate(prefix, '')] = value
+            rv[key.replace(prefix, '')] = value
     return rv
 
 

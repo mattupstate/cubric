@@ -125,6 +125,9 @@ class Initializer(object):
                 else:
                     file_update(fn, lambda _: contents)
 
+            puts(green('Remove default nginx configurations'))
+            run('rm /etc/nginx/conf.d/*.conf')
+
             puts(green('Create supervisor config folder'))
             dir_ensure('/etc/supervisor')
 
@@ -169,13 +172,14 @@ class Server(BaseServer):
 
 class WsgiApplicationContext(ApplicationContext):
 
-    def __init__(self, name='default', user='ubuntu',
-                 environment=None, wsgi_file=None, wsgi_callable=None,
+    def __init__(self, name='default', user='ubuntu', environment=None,
+                 wsgi_file=None, wsgi_callable=None, requirements=None,
                  nginx_template=None, supervisor_template=None):
         super(WsgiApplicationContext, self).__init__(name, user)
         self.environment = environment or 'development'
         self.wsgi_file = wsgi_file or 'wsgi.py'
         self.wsgi_callable = wsgi_callable or 'app'
+        self.requirements = requirements or 'requirements.txt'
         self.virtualenv = '/home/%s/.virtualenv/%s' % (self.user, self.name)
         self.root_dir = '/home/%s/sites/%s' % (self.user, self.name)
         self.releases_dir = self.root_dir + '/releases'
