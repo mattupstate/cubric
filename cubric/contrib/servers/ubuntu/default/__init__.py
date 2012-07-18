@@ -228,6 +228,9 @@ class WsgiApplicationContext(ApplicationContext):
                       self.log_dir, self.run_dir, self.shared_dir]:
                 dir_ensure(d)
 
+            # Create the virtualenv
+            run('mkvirtualenv ' + self.name)
+
     def upload_release(self):
         """Upload an application bundle to the server for a given context"""
         with settings(user=self.user):
@@ -258,10 +261,6 @@ class WsgiApplicationContext(ApplicationContext):
 
             # Link the current release
             file_link(release_dir, self.releases_dir + "/current")
-
-            # Recreate virtualenv
-            for c in ['rm', 'mk']:
-                run(c + 'virtualenv ' + self.name)
 
             # Install app dependencies
             with cd(current_release_link):
