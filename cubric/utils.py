@@ -7,10 +7,11 @@ from importlib import import_module
 
 from cuisine import run_local
 from fabric.api import prompt, env, local
+from fabric.colors import red
 
 
 def get_or_prompt(key, message, default='', validate=None):
-    if env.has_key(key):
+    if key in env:
         return env[key]
     return prompt(message + ":", key, default, validate)
 
@@ -74,7 +75,7 @@ def get_password_from_console():
 
         if len(password) < 6:
             print(red('Password should be a minimum of 6 characters. Try again.'))
-            get_sever_password()
+            get_password_from_console()
 
         verify = getpass('Retype Password: ')
 
@@ -99,7 +100,7 @@ def render(obj):
     elif isinstance(obj, types.DictType):
         rv = {}
         for k, v in obj.items():
-            rv[key] = get_v(v)
+            rv[k] = get_v(v)
 
     return rv
 
