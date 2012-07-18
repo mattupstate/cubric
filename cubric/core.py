@@ -37,10 +37,9 @@ class Server(object):
 
 class ApplicationContext(object):
 
-    def __init__(self, name=None, user=None, environment=None):
+    def __init__(self, name=None, user=None):
         self.name = name
         self.user = user
-        self.environment = environment
 
     def restart(self):
         raise NotImplementedError()
@@ -100,9 +99,9 @@ class provider(object):
         self.old_provider = None
 
     def __enter__(self):
-        self.old_provider = env.get('provider', None)
-        env.provider = get_provider()
-        return  env.provider
+        self.old_provider = env.get('cloud_provider', None)
+        env.cloud_provider = get_provider()
+        return  env.cloud_provider
 
     def __exit__(self, *args, **kwargs):
-        env.provider = self.old_provider
+        env.cloud_provider = self.old_provider

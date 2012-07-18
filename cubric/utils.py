@@ -60,27 +60,26 @@ def get_vars(prefix=None):
 def get_server():
     kwargs = get_server_vars()
     kwargs['sudo_user'] = env.user
-    return get_obj_from_env('server', 'Server class name',
+    return get_obj_from_env('server_class', 'Server class name',
                             True, kwargs)
 
 
 def get_server_vars():
-    return get_vars(env.get('server_var_prefix', 'server_'))
+    return get_vars(env.get('server_var_prefix', 'server__'))
 
 
 def get_app_context():
     kwargs = get_app_context_vars()
-    kwargs['environment'] = env.environment
-    return get_obj_from_env('app_context', 'App context class name',
+    return get_obj_from_env('context_class', 'App context class name',
                             True, kwargs)
 
 
 def get_app_context_vars():
-    return get_vars(env.get('app_var_prefix', 'app_'))
+    return get_vars(env.get('app_var_prefix', 'context__'))
 
 
 def get_provider():
-    provider_name = get_or_prompt('provider', 'Amazon or Rackspace?')
+    provider_name = get_or_prompt('cloud_provider', 'Amazon or Rackspace?')
     return import_module('cubric.providers.' + provider_name.strip().lower())
 
 

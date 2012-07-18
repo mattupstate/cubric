@@ -169,12 +169,13 @@ class Server(BaseServer):
 
 class WsgiApplicationContext(ApplicationContext):
 
-    def __init__(self, name='default', user='ubuntu', environment='development',
-                 wsgi_file='wsgi.py', wsgi_callable='app',
+    def __init__(self, name='default', user='ubuntu',
+                 environment=None, wsgi_file=None, wsgi_callable=None,
                  nginx_template=None, supervisor_template=None):
-        super(WsgiApplicationContext, self).__init__(name, user, environment)
-        self.wsgi_file = wsgi_file
-        self.wsgi_callable = wsgi_callable
+        super(WsgiApplicationContext, self).__init__(name, user)
+        self.environment = environment or 'development'
+        self.wsgi_file = wsgi_file or 'wsgi.py'
+        self.wsgi_callable = wsgi_callable or 'app'
         self.virtualenv = '/home/%s/.virtualenv/%s' % (self.user, self.name)
         self.root_dir = '/home/%s/sites/%s' % (self.user, self.name)
         self.releases_dir = self.root_dir + '/releases'
@@ -184,9 +185,9 @@ class WsgiApplicationContext(ApplicationContext):
         self.log_dir = self.root_dir + '/log'
         self.run_dir = self.root_dir + '/run'
         self.nginx_template = nginx_template or \
-            'etc/%s/nginx.conf.tmpl' % env.environment
+            'etc/%s/nginx.conf.tmpl' % self.environment
         self.supervisor_template = supervisor_template or \
-            'etc/%s/supervisor.conf.tmpl' % env.environment
+            'etc/%s/supervisor.conf.tmpl' % self.environment
 
     def create(self):
         """Create an application context on the server"""
