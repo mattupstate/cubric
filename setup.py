@@ -52,7 +52,7 @@ setup(
     license='MIT',
     author='Matthew Wright',
     author_email='matt@nobien.net',
-    description='Simple server creation and configuration on EC2 and Rackspace',
+    description='Simple server setup and WSGI application deployment for EC2 and Rackspace',
     long_description=__doc__,
     packages=packages,
     zip_safe=False,
