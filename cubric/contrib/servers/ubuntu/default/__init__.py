@@ -170,7 +170,7 @@ class Server(BaseServer):
 class WsgiApplicationContext(ApplicationContext):
 
     def __init__(self, name='default', user='ubuntu', environment='development',
-                 wsgi_file='wsgi.py', wsgi_callable='application',
+                 wsgi_file='wsgi.py', wsgi_callable='app',
                  nginx_template=None, supervisor_template=None):
         super(WsgiApplicationContext, self).__init__(name, user, environment)
         self.wsgi_file = wsgi_file
