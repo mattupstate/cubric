@@ -65,7 +65,7 @@ def get_server():
 
 
 def get_server_vars():
-    return get_vars('server_')
+    return get_vars(env.get('server_var_prefix', 'server_'))
 
 
 def get_app_context():
@@ -76,7 +76,7 @@ def get_app_context():
 
 
 def get_app_context_vars():
-    return get_vars('app_context_')
+    return get_vars(env.get('app_var_prefix', 'app_'))
 
 
 def get_provider():
