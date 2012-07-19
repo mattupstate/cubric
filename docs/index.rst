@@ -194,6 +194,9 @@ could quickly create a server and deploy your app using the following command::
 Hooray!
 
 
+Changelog
+=========
+
 .. toctree::
    :maxdepth: 2
 
