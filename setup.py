@@ -55,6 +55,7 @@ setup(
     description='Simple server setup and WSGI application deployment for EC2 and Rackspace',
     long_description=__doc__,
     packages=packages,
+    include_package_data=True,
     zip_safe=False,
     platforms='any',
     install_requires=['cuisine'],
