@@ -188,10 +188,20 @@ class WsgiApplicationContext(ApplicationContext):
         self.etc_dir = self.root_dir + '/etc'
         self.log_dir = self.root_dir + '/log'
         self.run_dir = self.root_dir + '/run'
-        self.nginx_template = nginx_template or \
-            'etc/%s/nginx.conf.tmpl' % self.environment
-        self.supervisor_template = supervisor_template or \
-            'etc/%s/supervisor.conf.tmpl' % self.environment
+
+        if nginx_template is None:
+            self.nginx_templates = (
+                'etc/%s/nginx.conf.tmpl' % self.environment,
+                'etc/nginx.conf.tmpl')
+        else:
+            self.nginx_templates = (nginx_template,)
+
+        if supervisor_template is None:
+            self.supervisor_templates = (
+                'etc/%s/supervisor.conf.tmpl' % self.environment,
+                'etc/supervisor.conf.tmpl')
+        else:
+            self.supervisor_templates = (supervisor_template,)
 
     def create(self):
         """Create an application context on the server"""
@@ -275,16 +285,23 @@ class WsgiApplicationContext(ApplicationContext):
     def upload_config(self):
         with settings(user=self.user):
             # Render nginx and supervisor configuration files
-            for c in [(self.nginx_template, 'nginx'),
-                      (self.supervisor_template, 'supervisor')]:
+            for c in [(self.nginx_templates, 'nginx'),
+                      (self.supervisor_templates, 'supervisor')]:
 
                 fn = '%s/%s.conf' % (self.etc_dir, c[1])
-                contents = file_local_read(c[0]) % self.__dict__
 
-                if file_exists(fn):
-                    file_update(fn, lambda _: contents)
-                else:
-                    file_write(fn, contents)
+                for f in c[0]:
+                    try:
+                        contents = file_local_read(c[0]) % self.__dict__
+                    except:
+                        continue
+
+                    if file_exists(fn):
+                        file_update(fn, lambda _: contents)
+                    else:
+                        file_write(fn, contents)
+
+                    break
 
     def link_config(self):
         with mode_sudo():
@@ -299,19 +316,22 @@ class WsgiApplicationContext(ApplicationContext):
                 file_link(source, destination)
 
     def start(self):
-        with server() as s:
-            s.start()
+        self._supervisorctl('start')
 
     def stop(self):
-        with server() as s:
-            s.stop()
+        self._supervisorctl('stop')
 
     def restart(self):
-        with server() as s:
-            s.restart()
+        self._supervisorctl('restart')
+
+    def status(self):
+        self._supervisorctl('status')
 
     def deploy(self):
         self.upload_release()
         self.upload_config()
         self.link_config()
         self.restart()
+
+    def _supervisorctl(self, command):
+        sudo('supervisorctl %s %s' % (command, self.name))
