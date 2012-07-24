@@ -11,7 +11,7 @@ from fabric.utils import puts
 from fabric.context_managers import cd, settings, prefix
 from fabric.contrib.console import confirm
 
-from cubric.core import Server as BaseServer, ApplicationContext, server
+from cubric.core import Server as BaseServer, ApplicationContext
 from cubric.utils import app_bundle
 
 
@@ -151,23 +151,63 @@ class Server(BaseServer):
     initializer = Initializer
 
     def reboot(self):
+        self.before_reboot()
+
         puts(green('Rebooting server'))
         sudo('reboot')
 
+        self.after_reboot()
+
+    def before_reboot(self):
+        pass
+
+    def after_reboot(self):
+        pass
+
     def restart(self):
+        self.before_restart()
+
         puts(green('Restarting server'))
         for c in ['nginx', 'supervisor']:
             sudo('/etc/init.d/%s restart' % c, pty=False)
 
+        self.after_restart()
+
+    def before_restart(self):
+        pass
+
+    def after_restart(self):
+        pass
+
     def start(self):
+        self.before_start()
+
         puts(green('Starting server'))
         for c in ['nginx', 'supervisor']:
             sudo('/etc/init.d/%s start' % c, pty=False)
 
+        self.after_start()
+
+    def before_start(self):
+        pass
+
+    def after_start(self):
+        pass
+
     def stop(self):
+        self.before_stop()
+
         puts(green('Stoping server'))
         for c in ['nginx', 'supervisor']:
             sudo('/etc/init.d/%s stop' % c, pty=False)
+
+        self.after_stop()
+
+    def before_stop(self):
+        pass
+
+    def after_stop(self):
+        pass
 
 
 class WsgiApplicationContext(ApplicationContext):
@@ -205,6 +245,8 @@ class WsgiApplicationContext(ApplicationContext):
 
     def create(self):
         """Create an application context on the server"""
+
+        self.before_create()
 
         puts(green('Creating app context'))
         tdir = os.path.dirname(__file__)
@@ -246,8 +288,18 @@ class WsgiApplicationContext(ApplicationContext):
             # Create the virtualenv
             run('mkvirtualenv ' + self.name)
 
+        self.after_create()
+
+    def before_create(self):
+        pass
+
+    def after_create(self):
+        pass
+
     def upload_release(self):
         """Upload an application bundle to the server for a given context"""
+        self.before_upload_release()
+
         with settings(user=self.user):
             with app_bundle():
                 local_bundle = env.local_bundle
@@ -282,7 +334,17 @@ class WsgiApplicationContext(ApplicationContext):
                 with prefix('workon ' + self.name):
                     run('pip install -r requirements.txt')
 
+        self.after_upload_release()
+
+    def before_upload_release(self):
+        pass
+
+    def after_upload_release(self):
+        pass
+
     def upload_config(self):
+        self.before_upload_config()
+
         with settings(user=self.user):
             # Render nginx and supervisor configuration files
             for c in [(self.nginx_templates, 'nginx'),
@@ -303,7 +365,17 @@ class WsgiApplicationContext(ApplicationContext):
 
                     break
 
+        self.after_upload_config()
+
+    def before_upload_config(self):
+        pass
+
+    def after_upload_config(self):
+        pass
+
     def link_config(self):
+        self.before_link_config()
+
         with mode_sudo():
             for c in [('/etc/nginx/conf.d', 'nginx'),
                       ('/etc/supervisor', 'supervisor')]:
@@ -315,23 +387,63 @@ class WsgiApplicationContext(ApplicationContext):
 
                 file_link(source, destination)
 
+        self.after_link_config()
+
+    def before_link_config(self):
+        pass
+
+    def after_link_config(self):
+        pass
+
     def start(self):
+        self.before_start()
         self._supervisorctl('start')
+        self.after_start()
+
+    def before_start(self):
+        pass
+
+    def after_start(self):
+        pass
 
     def stop(self):
+        self.before_stop()
         self._supervisorctl('stop')
+        self.after_stop()
+
+    def before_stop(self):
+        pass
+
+    def after_stop(self):
+        pass
 
     def restart(self):
+        self.before_restart()
         self._supervisorctl('restart')
+        self.after_restart()
+
+    def before_restart():
+        pass
+
+    def after_restart():
+        pass
 
     def status(self):
         self._supervisorctl('status')
 
     def deploy(self):
+        self.before_deploy()
         self.upload_release()
         self.upload_config()
         self.link_config()
         self.restart()
+        self.after_deploy()
+
+    def before_deploy():
+        pass
+
+    def after_deploy():
+        pass
 
     def _supervisorctl(self, command):
         sudo('supervisorctl %s %s' % (command, self.name))
