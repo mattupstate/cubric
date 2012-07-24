@@ -47,7 +47,7 @@ for dirpath, dirnames, filenames in os.walk('cubric'):
 
 setup(
     name='Cubric',
-    version='0.1.0',
+    version='0.1.1-dev',
     url='https://github.com/mattupstate/cubric',
     license='MIT',
     author='Matthew Wright',
